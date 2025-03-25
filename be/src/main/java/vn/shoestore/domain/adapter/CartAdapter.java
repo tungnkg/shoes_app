@@ -19,4 +19,6 @@ public interface CartAdapter {
   List<ProductCart> getAllByCartId(Long cartId);
 
   Cart getCartByUserId(Long userId);
+
+  void deleteCart(Long id);
 }

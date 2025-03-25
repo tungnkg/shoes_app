@@ -1,0 +1,43 @@
+.wrapper {
+    height: 91.85vh;
+    margin-left: 304px;
+  }
+
+  .order-detail-container {
+    width: 80%; /* Điều chỉnh theo ý muốn, có thể thử 70% hoặc 90% */
+    margin: 0 auto; /* Căn giữa */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-detail-container h2, 
+.order-detail-container p {
+  text-align: left; /* Hoặc center nếu muốn căn giữa */
+  margin-bottom: 10px;
+}
+
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .product-table th, .product-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .product-table th {
+    background-color: #f4f4f4;
+  }
+
+  
+  .order-detail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Căn giữa theo chiều ngang */
+  }
+  

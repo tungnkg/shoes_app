@@ -16,10 +16,11 @@
 }
 
 .headline-2 {
-  font-weight: 500;
+  font-weight: bold;
   letter-spacing: 0.007em;
   font-size: 28px;
   line-height: 32px;
+  margin-bottom: 20px;
 }
 
 .headline-5 {
@@ -388,17 +389,4 @@ button.ncss-cta-primary-dark.btn-lg {
 
 .btn-group{
   display: flex;
-}
-
-.size-option {
-  cursor: pointer;
-  padding: 5px;
-  border: 1px solid transparent;
-  transition: border-color 0.3s ease;
-}
-
-.size-option.selected {
-  border-color: #007bff; /* Highlight color */
-  outline: 2px solid #007bff; /* Optional outline */
-  border-radius: 4px;
 }

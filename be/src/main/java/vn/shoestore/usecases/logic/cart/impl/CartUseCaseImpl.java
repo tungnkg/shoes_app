@@ -233,6 +233,7 @@ public class CartUseCaseImpl implements ICartUseCase {
     }
 
     response.setProducts(productCartDTOS);
+    response.setAmount(productCartDTOS.stream().map(ProductCartDTO::getAmount).reduce(0, Integer::sum));
   }
 
   private CartResponse buildEmptyCart(User user) {

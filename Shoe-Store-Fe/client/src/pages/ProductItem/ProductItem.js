@@ -7,6 +7,10 @@ import styles from './productItem.module.scss';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { ShoppingCartOutlined } from '@ant-design/icons';
+import { notification } from 'antd';
+import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import config from '~/config';
 
 const cx = classNames.bind(styles);
 
@@ -14,10 +18,13 @@ const PUBLIC_API_URL = 'http://localhost:5252';
 
 
 function ProductItem() {
-  const user = JSON.parse(localStorage.getItem('user')) || null;
+  const access_token = localStorage.getItem('access_token') || null;
   const [collapsed, setCollapsed] = useState(true);
   const [product, setProduct] = useState(null);
+  const [sizeSelect, setSizeSelect] = useState(null);
+  const [sizeError, setSizeError] = useState('');
   const { id } = useParams();
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     fetchProducts();
@@ -27,10 +34,38 @@ function ProductItem() {
     axios
       .get(`${PUBLIC_API_URL}/open-api/products/${id}`)
       .then((res) => {
-        console.log(res)
+        console.log(res);
         setProduct(res.data.data);
       })
       .catch((err) => console.log(err));
+  };
+
+  const addToCart = () => {
+    if(sizeSelect == null){
+      setSizeError('Vui lòng chọn size sản phẩm');
+    }else{
+      const data = {
+        product_id: Number(id),
+        size: sizeSelect,
+        amount: 1,
+      };
+      axios
+        .post(`${PUBLIC_API_URL}/api/v1/cart/add`, data, {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        })
+        .then((res) => {
+          if(res.data.success){
+            message.success('Thêm vào giỏ hàng thành công');
+           window.location.reload();
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    
   };
 
 
@@ -42,14 +77,9 @@ function ProductItem() {
             {product &&
               product.images.map((image, index) => (
                 <button className={cx('item-image')} key={index}>
-                  <img
-                    alt=""
-                    src={image.attachment}
-                    className={cx('item-image-containt')}
-                  ></img>
+                  <img alt="" src={image.attachment} className={cx('item-image-containt')}></img>
                 </button>
-              ))
-            }
+              ))}
           </div>
         </div>
       </div>
@@ -59,12 +89,17 @@ function ProductItem() {
           <div className={cx('side-content-title')}>
             <div className={cx('pr2-sm', 'css-lou6bb2')}>
               <h1 className={cx('headline-2')}>{product && product.name}</h1>
-              <h2 className={cx('headline-5')}>Danh mục: {product && product.categories.map(i => i.name).join(' , ')}</h2>
+              <h2 className={cx('headline-5')}>
+                Danh mục: {product && product.categories.map((i) => i.name).join(' , ')}
+              </h2>
               <div className={cx('mb3-sm')}>
                 <div className={cx('headline-5', 'mt-2', 'mt-3')}>
                   <div className={cx('product-price_wrapper')}>
-                    <div className={cx('product-price')}>Giá sản phẩm:
-                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product && product.price)}
+                    <div className={cx('product-price')}>
+                      Giá sản phẩm:
+                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                        product && product.price,
+                      )}
                     </div>
                   </div>
                 </div>
@@ -80,23 +115,31 @@ function ProductItem() {
                     <span className={cx('pr10-sm', 'ta-sm-1', 'sizeHeader')}>Select Size</span>
                   </div>
                   <div className={cx('mt2-sm', 'css-12whm6j')}>
-                  {product && product.sizes.map(i => i.size).sort().map((size, index) => (
-                    <div key={index}>
-                      <input type="radio" className={cx('visually-hidden')} />
-                      <label className={cx('css-xf3ahg')}>{size}</label>
-                    </div>
-                  ))}
+                    {product &&
+                      product.sizes
+                        .map((i) => i.size)
+                        .sort()
+                        .map((size, index) => (
+                          <div
+                            key={index}
+                            onClick={() => setSizeSelect(size)}
+                          >
+                            <input
+                              type="radio"
+                              className={cx('visually-hidden', 'size-option', { 'selected': size === sizeSelect })}
+                              checked={size === sizeSelect}
+                              onChange={() => setSizeSelect(size)}
+                            />
+                            <label className={cx('css-xf3ahg')}>{size}</label>
+                          </div>
+                        ))}
                   </div>
+                  {sizeError && <p style={{color:'red'}} >{sizeError}</p>}
                 </div>
 
                 <div className={cx('btn-group')}>
-                  <div className={cx('mt10-sm', 'mb6-sm', 'pr16-sm', 'pr10-lg', 'u-thrity-percent', 'css-181b4yz')}>
-                    <button className={cx('ncss-btn-primary-dark', 'btn-lg', 'add-to-cart-btn')}>
-                    <ShoppingCartOutlined style={{ fontSize: '24px' }} />
-                    </button>
-                  </div>
-                  <div className={cx('mt10-sm', 'mb6-sm', 'pr16-sm', 'pr10-lg', 'u-sixty-percent', 'css-181b4yz')}>
-                    <button className={cx('ncss-btn-primary-dark', 'btn-lg', 'buy-btn')}>Mua ngay</button>
+                  <div className={cx('mt10-sm', 'mb6-sm', 'pr16-sm', 'pr10-lg', 'u-full-width', 'css-181b4yz')}>
+                    <button className={cx('ncss-btn-primary-dark', 'btn-lg', 'buy-btn')} onClick={addToCart}>Thêm vào giỏ hàng</button>
                   </div>
                 </div>
               </div>

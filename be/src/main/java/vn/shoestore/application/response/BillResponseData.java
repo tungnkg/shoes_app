@@ -23,6 +23,9 @@ public class BillResponseData {
   private String address;
   private String phoneNumber;
   private Double total;
+  private Boolean isOnlineTransaction;
+  private Long userId;
+  private String userName;
 
   @Builder.Default private List<ProductBilDTO> products = new ArrayList<>();
 }

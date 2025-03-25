@@ -1,5 +1,6 @@
 package vn.shoestore.domain.adapter.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import vn.shoestore.domain.adapter.CartAdapter;
 import vn.shoestore.domain.model.Cart;
@@ -64,5 +65,14 @@ public class CartAdapterImpl implements CartAdapter {
     Cart cart = ModelMapperUtils.mapper(cartOptional.get(), Cart.class);
     enrichProductCart(cart);
     return cart;
+  }
+
+  @Transactional
+  @Override
+  public void deleteCart(Long id) {
+    Optional<CartEntity> cartOptional = cartRepository.findById(id);
+    if (cartOptional.isEmpty()) return;
+    productCartRepository.deleteAllByCartId(id);
+    cartRepository.deleteById(id);
   }
 }

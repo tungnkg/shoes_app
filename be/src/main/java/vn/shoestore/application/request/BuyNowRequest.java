@@ -18,6 +18,9 @@ import vn.shoestore.shared.dto.BuyNowProductDTO;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BuyNowRequest {
+  @NotNull(message = "Id giỏ hàng không được để rỗng")
+  private Long cartId;
+
   @NotNull(message = "Địa chỉ không được để rỗng")
   private String address;
 

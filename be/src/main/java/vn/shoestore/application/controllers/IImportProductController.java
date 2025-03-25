@@ -11,7 +11,7 @@ import vn.shoestore.application.response.GetAllTicketResponse;
 import vn.shoestore.application.response.ImportTicketResponse;
 
 @RestController
-@RequestMapping("/api/v1/import/")
+@RequestMapping("/open-api/v1/import/")
 public interface IImportProductController {
   @PostMapping("/save-or-update-ticket")
   ResponseEntity<BaseResponse> saveOrUpdateTicket(@RequestBody @Valid ImportProductRequest request);

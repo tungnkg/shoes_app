@@ -37,6 +37,7 @@ public class BillUseCaseImpl implements IBillUseCase {
   private final CartAdapter cartAdapter;
   private final ProductAdapter productAdapter;
   private final IGetProductUseCase iGetProductUseCase;
+  private final UserAdapter userAdapter;
 
   @Override
   @Transactional
@@ -109,6 +110,7 @@ public class BillUseCaseImpl implements IBillUseCase {
     validateAmountBuyNow(products, productAmounts, properties);
 
     extractProductInStorageForBuyNow(request.getProducts(), productAmounts, properties);
+    this.cartAdapter.deleteCart(request.getCartId());
     return createBillForBuyNow(request, properties, isOnlineTransaction);
   }
 
@@ -195,6 +197,10 @@ public class BillUseCaseImpl implements IBillUseCase {
         ModelTransformUtils.toMap(productResponses, ProductResponse::getId);
 
     for (BillResponseData responseData : data) {
+      responseData.setUserName(this.userAdapter.getUserByIdIn(Collections.singletonList(responseData.getUserId()))
+              .stream()
+              .findFirst().map(User::getUsername).orElse(null)
+      );
       List<ProductBill> productInBills =
           mapProductBills.getOrDefault(responseData.getId(), Collections.emptyList());
       if (productInBills.isEmpty()) continue;

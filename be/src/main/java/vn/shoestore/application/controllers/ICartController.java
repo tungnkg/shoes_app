@@ -9,7 +9,7 @@ import vn.shoestore.application.response.BaseResponse;
 import vn.shoestore.application.response.CartResponse;
 
 @RestController
-@RequestMapping("/api/v1/cart")
+  @RequestMapping("/api/v1/cart")
 public interface ICartController {
   @GetMapping
   ResponseEntity<BaseResponse<CartResponse>> getCart();

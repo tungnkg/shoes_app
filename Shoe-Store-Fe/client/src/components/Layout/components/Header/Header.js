@@ -31,36 +31,59 @@ const MENU_ITEMS = [
     title: 'Đăng xuất',
     to: '/login',
     onClick: () => {
-      axios.post(`http://localhost:5252/api/v1/auth/logout`, {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      })
-      .then((res) => {
-            if(res.status === 200){
+      axios
+        .post(
+          `http://localhost:5252/api/v1/auth/logout`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+            },
+          },
+        )
+        .then((res) => {
+          if (res.status === 200) {
             message.success('Đăng xuất thành công');
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user');
-            }else{
-              message.error('Đăng xuất thất bại');
-            }
-      })
-      .catch((err) => message.error(err.response.data.message));
+          } else {
+            message.error('Đăng xuất thất bại');
+          }
+        })
+        .catch((err) => message.error(err.response.data.message));
     },
   },
 ];
 
+const PUBLIC_API_URL = 'http://localhost:5252';
+
+
 function Header() {
   const currentUser = JSON.parse(localStorage.getItem('user')) || null;
   const [productResult, setProductResult] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [amount, setAmount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
       setProductResult([1, 2, 3]);
     }, 0);
+    fetchCart();
   }, []);
+
+  const fetchCart = () => {
+    axios
+      .get(`${PUBLIC_API_URL}/api/v1/cart`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },  
+      })
+      .then((res) => {
+        setAmount(res.data.data.amount);
+      })
+      .catch((err) => console.log(err));
+  };
 
   // function render Item trong MENU_ITEMS
   const renderItem = () => {
@@ -79,12 +102,12 @@ function Header() {
         </Link>
 
         <ul className={cx('pre-desktop-menu')}>
-            <Link to={config.routes.home} className={cx('pre-desktop-menu-item')}>
-              <button className={cx('dropdown-toggle')}>HOME</button>
-            </Link>
-            <Link to={config.routes.product} className={cx('pre-desktop-menu-item')}>
-              <button className={cx('dropdown-toggle')}>PRODUCTS</button>
-            </Link>
+          <Link to={config.routes.home} className={cx('pre-desktop-menu-item')}>
+            <button className={cx('dropdown-toggle')}>HOME</button>
+          </Link>
+          <Link to={config.routes.product} className={cx('pre-desktop-menu-item')}>
+            <button className={cx('dropdown-toggle')}>PRODUCTS</button>
+          </Link>
           <li className={cx('pre-desktop-menu-item')}>
             <button className={cx('dropdown-toggle')}>BLOG</button>
           </li>
@@ -93,13 +116,16 @@ function Header() {
           </li>
         </ul>
         <div className={cx('search-place')}>
-         
-
-            <div className={cx('action')}></div>
-            {currentUser ? (
-
-              <>
-              <ShoppingCartOutlined style={{ fontSize: '24px' }} />
+          <div className={cx('action')}></div>
+          {currentUser ? (
+            <>
+              <div className={cx('cart-icon-wrapper')}>
+                <ShoppingCartOutlined
+                  style={{ fontSize: '24px', cursor: 'pointer' }} // Add cursor style for hover effect
+                  onClick={() => navigate(config.routes.cart)} // Navigate to the cart page on click
+                />
+                <span className={cx('cart-amount')}>{amount}</span> {/* Display the amount */}
+              </div>
 
               <Tippy
                 interactive
@@ -118,17 +144,14 @@ function Header() {
                   <FontAwesomeIcon icon={faUser} />
                 </button>
               </Tippy>
-              </>
-              
-
-              
-            ) : (
-              <button className={cx('login-btn')}>
-                <Link to={config.routes.login}>Log in</Link>
-              </button>
-            )}
-          </div>
+            </>
+          ) : (
+            <button className={cx('login-btn')}>
+              <Link to={config.routes.login}>Log in</Link>
+            </button>
+          )}
         </div>
+      </div>
     </header>
   );
 }
