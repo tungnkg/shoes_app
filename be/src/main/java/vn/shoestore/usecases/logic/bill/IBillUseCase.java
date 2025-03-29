@@ -9,7 +9,7 @@ import vn.shoestore.application.response.BillResponseData;
 public interface IBillUseCase {
   BillResponseData createBill(CreateBillRequest request, Boolean isOnlineTransaction);
 
-  void adminConfirmBill(Long billId);
+  void adminConfirmBill(Long billId, Integer status);
 
   BillResponseData buyNow(BuyNowRequest request, Boolean isOnlineTransaction);
 

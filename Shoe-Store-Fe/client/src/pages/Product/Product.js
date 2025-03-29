@@ -12,7 +12,6 @@ const cx = classNames.bind(styles);
 
 const PUBLIC_API_URL = 'http://localhost:5252';
 
-
 function Product() {
   const [visible, setVisible] = useState(true);
   const [products, setProducts] = useState([]);
@@ -20,23 +19,33 @@ function Product() {
   const [selectedCategory, setSelectCategory] = useState([]);
   const [sizes, setSizes] = useState([]);
   const [color, setColor] = useState(null);
+  const [min, setMin] = useState(null);
+  const [max, setMax] = useState(null);
   const [is_promoted, setIsPromoted] = useState(false);
 
   useEffect(() => {
     fetchProducts();
-    console.log(selectedBrands + "  " + selectedCategory + "  " + sizes + "  " + color + " " + is_promoted);
-  }, [selectedBrands, selectedCategory, sizes, color, is_promoted]);
+    console.log(selectedBrands + '  ' + selectedCategory + '  ' + sizes + '  ' + color + ' ' + is_promoted);
+  }, [selectedBrands, selectedCategory, sizes, color, is_promoted, min, max]);
 
   const fetchProducts = () => {
-    
+    const req = {
+      brands: selectedBrands,
+      categories: selectedCategory,
+      color: color,
+      min_cost: min,
+      max_cost: max,
+      is_promoted: is_promoted,
+      page: 1,
+      size: 10000
+    }
     axios
-      .get(`${PUBLIC_API_URL}/open-api/v1/product/get-all`)
+      .post(`${PUBLIC_API_URL}/open-api/products/search-products`,req )
       .then((res) => {
-        setProducts(res.data.data);
+        setProducts(res.data.data.data);
       })
       .catch((err) => console.log(err));
   };
-
 
   const toggleSideBar = () => {
     setVisible(!visible);
@@ -44,9 +53,18 @@ function Product() {
 
   return (
     <div className={cx('experience-wrapper')}>
-      <div className={cx('sidebar')} style={{ display: visible ? 'block' : 'none', transition: 'margin-left 0.4s ease-in-out' }}>
-        <Sidebar setSelectedBrands={setSelectedBrands} setSelectCategory={setSelectCategory} setSizes={setSizes} setColor={setColor} 
-                setIsPromoted={setIsPromoted}
+      <div
+        className={cx('sidebar')}
+        style={{ display: visible ? 'block' : 'none', transition: 'margin-left 0.4s ease-in-out' }}
+      >
+        <Sidebar
+          setSelectedBrands={setSelectedBrands}
+          setSelectCategory={setSelectCategory}
+          setSizes={setSizes}
+          setColor={setColor}
+          setIsPromoted={setIsPromoted}
+          setMin={setMin}
+          setMax={setMax}
         />
       </div>
 
@@ -57,7 +75,11 @@ function Product() {
         <header className={cx('wall-header')}>
           <div className={cx('wall-header_content')}>
             <nav className={cx('wall-header_nav')}>
-              <button className={cx('filters-btn')} onClick={toggleSideBar}>
+              <button
+                className={cx('filters-btn')}
+                onClick={toggleSideBar}
+                style={{ outline: '2px solid #ccc', padding: '5px' }}
+              >
                 {visible ? (
                   <span className={cx('filters-btn_filter_text')}>Hide Filters</span>
                 ) : (
@@ -65,6 +87,7 @@ function Product() {
                 )}
                 <FontAwesomeIcon className={cx('icon-filter-ds')} icon={faSliders} />
               </button>
+
             </nav>
           </div>
         </header>
@@ -74,7 +97,10 @@ function Product() {
             <div className={cx('product-grid_items')}>
               {products.map((product) => {
                 return (
-                  <Link to={`${config.routes.productItem}/${product.id}` } className={cx('product-card', 'product-grid_card')}>
+                  <Link
+                    to={`${config.routes.productItem}/${product.id}`}
+                    className={cx('product-card', 'product-grid_card')}
+                  >
                     <div className={cx('product-card_body')}>
                       <figure>
                         <div className={cx('wall-image-loader')}>
@@ -86,11 +112,18 @@ function Product() {
                         </div>
                         <div className={cx('product-card_info')}>
                           <p className={cx('product-card_info-title')}>{product.name}</p>
-                          <p className={cx('product-card_info-body')}>Danh mục: {product.categories.map(i => i.name).join(' , ')}</p>
+                          <p className={cx('product-card_info-body')}>
+                            Danh mục: {product.categories.map((i) => i.name).join(' , ')}
+                          </p>
                         </div>
                         <div className={cx('product-card_footer')}>
                           <div className={cx('product-card_price')}>
-                            <span className={cx('product-card_price-title')}>Giá sản phẩm: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)}</span>
+                            <span className={cx('product-card_price-title')}>
+                              Giá sản phẩm:{' '}
+                              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(
+                                product.price,
+                              )}
+                            </span>
                           </div>
                           <button className={cx('product-card_btn')}>
                             <FontAwesomeIcon className={cx('product-card_btn-shopping')} icon={faCartShopping} />
@@ -99,11 +132,8 @@ function Product() {
                       </figure>
                     </div>
                   </Link>
-                )
-
+                );
               })}
-
-
             </div>
           </section>
         </main>

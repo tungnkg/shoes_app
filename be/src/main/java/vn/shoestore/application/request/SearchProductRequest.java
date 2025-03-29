@@ -16,14 +16,12 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder
 public class SearchProductRequest {
-  private String name;
-  private String code;
-
   @Builder.Default private List<Integer> brands = new ArrayList<>();
 
   @Builder.Default private List<Integer> categories = new ArrayList<>();
 
   private Integer minCost;
+  private String color;
   private Integer maxCost;
 
   @Builder.Default private Boolean isPromoted = false;

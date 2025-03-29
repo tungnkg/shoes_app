@@ -17,8 +17,8 @@ public interface IBillController {
   ResponseEntity<BaseResponse<BillResponseData>> createBill(
       @RequestBody @Valid CreateBillRequest request);
 
-  @PutMapping("confirm-purchase/{id}")
-  ResponseEntity<BaseResponse> confirmPurchase(@PathVariable Long id);
+  @PutMapping("update-status/{id}")
+  ResponseEntity<BaseResponse> confirmPurchase(@PathVariable Long id, @RequestParam Integer status);
 
   @PostMapping("buy-now")
   ResponseEntity<BaseResponse<BillResponseData>> buyNow(@RequestBody @Valid BuyNowRequest request);
@@ -27,7 +27,7 @@ public interface IBillController {
   ResponseEntity<BaseResponse<BillResponse>> getBillByConditions(
       @RequestBody GetAllBillRequest request);
 
-  @PostMapping("get-bill-info/{id}")
+  @GetMapping("get-bill-info/{id}")
   ResponseEntity<BaseResponse<BillResponseData>> getOneBill(@PathVariable Long id);
 
   @PostMapping("cancel-order/{id}")

@@ -24,8 +24,8 @@ public class BillControllerImpl implements IBillController {
   }
 
   @Override
-  public ResponseEntity<BaseResponse> confirmPurchase(Long id) {
-    iBillUseCase.adminConfirmBill(id);
+  public ResponseEntity<BaseResponse> confirmPurchase(Long id, Integer status) {
+    iBillUseCase.adminConfirmBill(id, status);
     return ResponseFactory.success();
   }
 

@@ -5,8 +5,10 @@ import lombok.Getter;
 @Getter
 public enum BillStatusEnum {
   CREATED(0),
-  PURCHASE(1),
-  CANCEL(2);
+  CONFIRM(1),
+  DELIVERY(2),
+  PURCHASE(3),
+  CANCEL(4);
 
   private final int status;
 

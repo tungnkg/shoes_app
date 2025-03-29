@@ -26,6 +26,7 @@ const MENU_ITEMS = [
   {
     title: 'Lịch sử mua hàng',
     to: '/history',
+    onClick: () => window.location.href = '/history',
   },
   {
     title: 'Đăng xuất',

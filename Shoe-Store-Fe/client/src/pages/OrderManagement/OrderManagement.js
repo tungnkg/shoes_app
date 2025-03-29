@@ -15,14 +15,29 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import axios from 'axios';
 import { MDBIcon } from 'mdb-react-ui-kit';
-import { EyeOutlined } from '@ant-design/icons';
+import {
+  CarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  EyeOutlined,
+  SmileOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
 const PUBLIC_API_URL = 'http://localhost:5252';
 
 const cx = classNames.bind(styles);
 
-const billStatus = ['Đã tạo' ,'Đã mua','Đã hủy' ];
+const billStatus = ['Chờ xác nhận', 'Đã xác nhận', 'Đang vẫn chuyển', 'Đã nhận được hàng', 'Đã hủy'];
+
+const statusIcons = {
+  0: <ClockCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />, // Chờ xác nhận
+  1: <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />, // Đã xác nhận
+  2: <CarOutlined style={{ color: 'blue', marginRight: '8px' }} />, // Đang vận chuyển
+  3: <SmileOutlined style={{ color: 'purple', marginRight: '8px' }} />, // Đã nhận được hàng
+  4: <CloseCircleOutlined style={{ color: 'red', marginRight: '8px' }} />, // Đã hủy
+};
 
 function OrderManagement() {
   const [bills, setBills] = useState([]);
@@ -35,17 +50,17 @@ function OrderManagement() {
   const fetchBill = () => {
     const req = {
       page: 1,
-      size: 1000
-    }
+      size: 1000,
+    };
     axios
-      .post(`${PUBLIC_API_URL}/api/v1/bill/get-all`, req, { 
+      .post(`${PUBLIC_API_URL}/api/v1/bill/get-all`, req, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+        },
       })
       .then((res) => {
-        console.log(res)
-        setBills(res.data.data.data)
+        console.log(res);
+        setBills(res.data.data.data);
       })
       .catch((err) => console.log(err));
   };
@@ -99,14 +114,17 @@ function OrderManagement() {
                   <p className={cx('item-content')}>{inv.total}</p>
                 </div>
                 <div className={cx('item-site')}>
-                  <p className={cx('item-content')}>{billStatus[inv.status]}</p>
+                  <p className={cx('item-content')}>
+                    {statusIcons[inv.status]} {/* Add the icon */}
+                    {billStatus[inv.status]}
+                  </p>
                 </div>
                 <div className={cx('item-site')}>
                   <p className={cx('item-content')}>{inv.created_date}</p>
                 </div>
                 <div className={cx('item-site')}>
                   <div className={cx('wrapper-icon')}>
-                  <EyeOutlined style={{fontSize: 24}} onClick={() => navigate(`/orderDetail/${inv.id}`)}  />
+                    <EyeOutlined style={{ fontSize: 24 }} onClick={() => navigate(`/orderDetail/${inv.id}`)} />
                   </div>
                 </div>
               </div>

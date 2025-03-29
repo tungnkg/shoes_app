@@ -1,75 +1,152 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 import styles from './OrderDetail.module.scss';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'antd'; // or '@mui/material/Button' for Material-UI
+import config from '~/config';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from '@mui/material';
+import { Select } from 'antd';
+import { message } from 'antd';
+import { CarOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, SmileOutlined } from '@ant-design/icons';
+
 const cx = classNames.bind(styles);
+const PUBLIC_API_URL = 'http://localhost:5252';
+
+const billStatus = [
+  {
+    value: 0,
+    label: 'Chờ xác nhận',
+  },
+  {
+    value: 1,
+    label: 'Xác nhận đơn hàng',
+  },
+  {
+    value: 2,
+    label: 'Đang được vận chuyển',
+  },
+  {
+    value: 4,
+    label: 'Hủy đơn hàng',
+  },
+];
+
+const statusIcons = {
+  0: <ClockCircleOutlined style={{ color: 'orange', marginRight: '8px' }} />, // Chờ xác nhận
+  1: <CheckCircleOutlined style={{ color: 'green', marginRight: '8px' }} />, // Đã xác nhận
+  2: <CarOutlined style={{ color: 'blue', marginRight: '8px' }} />, // Đang vận chuyển
+  3: <SmileOutlined style={{ color: 'purple', marginRight: '8px' }} />, // Đã nhận được hàng
+  4: <CloseCircleOutlined style={{ color: 'red', marginRight: '8px' }} />, // Đã hủy
+};
+
 const OrderDetail = () => {
-  const order = {
-    id: 4,
-    created_date: "2025-03-25 11:41:40",
-    status: 0,
-    address: "27 Ngõ 111 Nguyễn Xiển, phường Hạ Đình, Quận Thanh Xuân, Tp Hà Nội",
-    phone_number: "0347204560",
-    total: 32615000,
-    is_online_transaction: false,
-    user_name: "tungdz",
-    products: [
-      {
-        product_id: 4,
-        size: 41,
-        price: 15258000,
-        amount: 2,
-        product: {
-          name: "Nike Vaporfly 4",
-          code: "IB8167-999",
-          description:
-            "The Vaporfly 4 is a mile-eating machine that just got lighter.",
-          thumbnail_img:
-            "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/82d512f1-14cf-4418-afc0-40a001b1bb4a/ZOOMX+VAPORFLY+NEXT%25+4+PRM.png",
+  const [bill, setBill] = useState({});
+  const id = useParams()?.id;
+  const navigate = useNavigate();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [status, setStatus] = useState(0);
+
+  useEffect(() => {
+    fetchBill();
+  }, []);
+
+  const fetchBill = () => {
+    axios
+      .get(`${PUBLIC_API_URL}/api/v1/bill/get-bill-info/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('access_token')}`,
         },
-      },
-      {
-        product_id: 3,
-        size: 42,
-        price: 12358000,
-        amount: 2,
-        product: {
-          name: "Nike Pegasus Premium",
-          code: "HQ2592-100",
-          description:
-            "The Pegasus Premium supercharges responsive cushioning with a triple stack.",
-          thumbnail_img:
-            "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/22d82643-0bed-457a-b859-2a55303dcb29/NIKE+PEGASUS+PREMIUM.png",
+      })
+      .then((res) => {
+        console.log(res);
+        setBill(res.data.data);
+        setStatus(res.data.data.status);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleUpdateStatus = () => {
+    axios
+      .put(
+        `${PUBLIC_API_URL}/api/v1/bill/update-status/${id}?status=${status}`,
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+          },
         },
-      },
-    ],
+      )
+      .then((res) => {
+        message.success('Xác nhận đơn hàng thành công');
+        window.location.href = config.routes.ordermanagement;
+        fetchBill();
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
-  <section className={cx('wrapper')}>
-    <div className="">
-      <div className="">
-        <h2 className="">Order Details</h2>
-        <p><strong>Order ID:</strong> {order.id}</p>
-        <p><strong>Date:</strong> {order.created_date}</p>
-        <p><strong>Customer:</strong> {order.user_name}</p>
-        <p><strong>Phone:</strong> {order.phone_number}</p>
-        <p><strong>Address:</strong> {order.address}</p>
-        <p><strong>Total:</strong> {order.total.toLocaleString()} VND</p>
-        <p><strong>Payment Method:</strong> {order.is_online_transaction ? "Online" : "Cash on Delivery"}</p>
+    <section className={cx('wrapper')}>
+      <div className={cx('order-details')}>
+        <div className={cx('select-container')}>
+          <Select
+            value={status}
+            onChange={(value) => setStatus(value)} // Update the status state
+            style={{ width: 200 }}
+            placeholder="Chọn trạng thái đơn hàng"
+          >
+            
+            {billStatus.map((item) => (
+              <Select.Option key={item.value} value={item.value}>
+                {statusIcons[item.value]}
+                {item.label}
+              </Select.Option>
+            ))}
+          </Select>
+          <Button type="primary" onClick={handleUpdateStatus} style={{ marginLeft: '10px' }}>
+            Cập nhật trạng thái
+          </Button>
+        </div>
+        <h2 className={cx('title')}>Chi tiết đơn hàng</h2>
+        <div className={cx('info')}>
+          <p>
+            <strong>Mã đơn hàng:</strong> {bill?.id}
+          </p>
+          <p>
+            <strong>Tên khách hàng:</strong> {bill?.user_name}
+          </p>
+          <p>
+            <strong>Số điện thoại:</strong> {bill?.phone_number}
+          </p>
+          <p>
+            <strong>Address:</strong> {bill?.address}
+          </p>
+          <p>
+            <strong>Tiền thanh toán:</strong> {bill?.total?.toLocaleString()} VND
+          </p>
+          <p>
+            <strong>Ngày đặt hàng:</strong> {bill?.created_date}
+          </p>
+          <p>
+            <strong>Hình thức thanh toán:</strong>{' '}
+            {bill?.is_online_transaction ? 'Thanh toán trực tuyến' : 'Thanh toán khi nhận hàng'}
+          </p>
+        </div>
 
-        <h3 className="">Products</h3>
-        <div className="">
-          {order.products.map((item, index) => (
-            <div key={index} className="">
+        <h3 className={cx('subtitle')}>Sản phẩm</h3>
+        <div className={cx('products')}>
+          {bill?.products?.map((item, index) => (
+            <div key={index} className={cx('product-item')}>
               <img
                 src={item.product.thumbnail_img}
-                width={300}
+                width={150}
                 alt={item.product.name}
-                className=""
+                className={cx('product-image')}
               />
-              <div>
-                <p className="font-bold">{item.product.name}</p>
-                <p className="text-sm text-gray-600">Code: {item.product.code}</p>
+              <div className={cx('product-info')}>
+                <p className={cx('product-name')}>{item?.product?.name}</p>
+                <p className={cx('product-code')}>Code: {item?.product?.code}</p>
                 <p>Size: {item.size}</p>
                 <p>Price: {item.price.toLocaleString()} VND</p>
                 <p>Quantity: {item.amount}</p>
@@ -77,8 +154,16 @@ const OrderDetail = () => {
             </div>
           ))}
         </div>
+
+        <Button
+          type="primary"
+          className={cx('back-btn')}
+          onClick={() => navigate(config.routes.ordermanagement)}
+          style={{ marginTop: '20px' }}
+        >
+          Quay lại
+        </Button>
       </div>
-    </div>
     </section>
   );
 };

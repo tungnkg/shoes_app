@@ -20,11 +20,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
                     LEFT JOIN product_categories pc on p.id = pc.product_id
                     LEFT JOIN product_promotions pp on p.id = pp.product_id
                     LEFT JOIN promotions pr on pp.promotion_id = pr.id
-                    WHERE
-                        (:#{#request.getName()} is null or p.name like concat('%' , :#{#request.getName()}, '%'))
-                        AND (:#{#request.getCode()} is null  or p.code like concat('%' , :#{#request.getCode()} , '%'))
-                        AND (:#{#request.getBrands().empty == true} or pb.brand_id in :#{#request.getBrands()})
+                    WHERE (:#{#request.getBrands().empty == true} or pb.brand_id in :#{#request.getBrands()})
                         AND (:#{#request.getCategories().empty == true} or pc.category_id in :#{#request.getCategories()})
+                        AND (:#{#request.getColor()} is null or p.color = :#{#request.getColor()})
                         AND (:#{#request.getMinCost()} is null or p.price >= :#{#request.getMinCost()})
                         AND (:#{#request.getMaxCost()} is null or p.price <= :#{#request.getMaxCost()})
                         AND (:#{#request.getIsPromoted() == false} or (now() between pr.start_date and pr.end_date))

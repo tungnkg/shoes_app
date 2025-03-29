@@ -24,16 +24,14 @@ const colors = [
 
 const cx = classNames.bind(styles);
 
-function Sidebar({ setSelectedBrands, setSelectCategory, setSizes, setColor, setIsPromoted }) {
+function Sidebar({ setSelectedBrands, setSelectCategory, setColor, setIsPromoted, setMin, setMax }) {
   const [collapsed1, setCollapsed1] = useState(true);
-  const [collapsed2, setCollapsed2] = useState(true);
   const [collapsed3, setCollapsed3] = useState(true);
   const [collapsed4, setCollapsed4] = useState(true);
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
 
   const [selectedRanges, setSelectedRanges] = useState([]);
-  const [sizeCurr, setSizeCurr] = useState([]);
 
   const handleFilterChange = (event) => {
     const { value, checked } = event.target;
@@ -45,6 +43,8 @@ function Sidebar({ setSelectedBrands, setSelectCategory, setSizes, setColor, set
         ? [...prev, { min, max }]
         : prev.filter((range) => range.min !== min || range.max !== max)
     );
+    setMin(min);
+    setMax(max);
   };
 
   const minPrice =
@@ -95,14 +95,6 @@ function Sidebar({ setSelectedBrands, setSelectCategory, setSizes, setColor, set
     );
   };
 
-  const toggleSize = (size) => {
-    setSizeCurr((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );/*  */
-    setSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
-  };
 
 
   return (
@@ -176,38 +168,6 @@ function Sidebar({ setSelectedBrands, setSelectCategory, setSizes, setColor, set
             <input className={cx('pseudo-checkbox')} type="checkbox" value="4000000-9999999" onChange={handleFilterChange} />
             <span className={cx('filter-item_item-label')}>Trên 4,000,000đ</span>
           </button>
-        </div>
-      </div>
-
-      {/* Size */}
-      <div className={cx('Collapsible', !collapsed2 ? '-is-collapsed' : '')} >
-        <span className={cx('Collapsible_trigger')}>
-          <div className={cx('trigger-content')}>
-            <div className={cx('trigger-content_label')}>Size</div>
-            <div onClick={() => setCollapsed2(!collapsed2)}>
-              {collapsed2 ? (
-                <button className={cx('trigger-content_icon', '-is-up')}>
-                  <FontAwesomeIcon icon={faChevronUp} />
-                </button>
-              ) : (
-                <button className={cx('trigger-content_icon', '-is-down')}>
-                  <FontAwesomeIcon icon={faChevronDown} />
-                </button>
-              )}
-            </div>
-          </div>
-        </span>
-        {/* ------------------------------------------------------- */}
-        <div style={{ display: collapsed2 ? 'block' : 'none' }} className={cx('filter-item_block')}>
-          {sizes.map((size) => (
-            <button
-              className={cx('filter-item-size', sizeCurr.includes(size) && 'active')}
-              key={size}
-              onClick={() => toggleSize(size)}
-            >
-              <span className={cx("filter-item_item-label")}>{size}</span>
-            </button>
-          ))}
         </div>
       </div>
 

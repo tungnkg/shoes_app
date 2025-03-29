@@ -84,9 +84,9 @@ public class BillUseCaseImpl implements IBillUseCase {
   }
 
   @Override
-  public void adminConfirmBill(Long billId) {
+  public void adminConfirmBill(Long billId, Integer status) {
     Bill bill = billAdapter.findBillById(billId);
-    bill.setStatus(BillStatusEnum.PURCHASE.getStatus());
+    bill.setStatus(status);
     billAdapter.saveBill(bill);
   }
 

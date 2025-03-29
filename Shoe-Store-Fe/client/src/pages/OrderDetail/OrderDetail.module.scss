@@ -1,43 +1,99 @@
 .wrapper {
-    height: 91.85vh;
-    margin-left: 304px;
-  }
-
-  .order-detail-container {
-    width: 80%; /* Điều chỉnh theo ý muốn, có thể thử 70% hoặc 90% */
-    margin: 0 auto; /* Căn giữa */
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .order-detail-container h2, 
-.order-detail-container p {
-  text-align: left; /* Hoặc center nếu muốn căn giữa */
-  margin-bottom: 10px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 304px;
 }
 
+.order-details {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
-.product-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .product-table th, .product-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .product-table th {
-    background-color: #f4f4f4;
-  }
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
 
-  
-  .order-detail-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Căn giữa theo chiều ngang */
-  }
-  
+.info {
+  margin-bottom: 20px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.info p {
+  margin: 5px 0;
+}
+
+.subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: calc(50% - 10px); /* Two items per row */
+}
+
+.product-image {
+  border-radius: 8px;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.product-code {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 5px;
+}
+
+.product-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.select-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Align to the left */
+  margin-top: 20px;
+}
+
+.select-container .ant-select {
+  width: 200px; /* Set a fixed width for the dropdown */
+}
+
+.select-container .ant-btn {
+  margin-left: 10px; /* Add spacing between the dropdown and the button */
+}

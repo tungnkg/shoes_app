@@ -97,7 +97,7 @@ const buyNow = () => {
   const totalAmount = cartItems.reduce((sum, item) => sum + item.price * item.amount, 0);
   
   return (<>
-    <Container sx={{ display: "flex", gap: 4, transform: "scale(1.5)", transformOrigin: "top left" }}>
+    {cartItems?.length !== 0? (<Container sx={{ display: "flex", gap: 4, transform: "scale(1.5)", transformOrigin: "top left" }}>
       <Grid container spacing={3} sx={{ flex: 2 }}>
         {cartItems.map((item) => (
           <Grid item xs={12} key={item.product_id}>
@@ -185,7 +185,9 @@ const buyNow = () => {
           <Button onClick={buyNow} color="primary">Xác nhận</Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Container>): 
+    <Typography variant="h2">Không có sản phẩm nào trong giỏ hàng, bạn vui lòng mua hàng r vào giỏ hàng</Typography>
+    }
     </>
   );
 };
